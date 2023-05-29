@@ -54,8 +54,11 @@ export default defineComponent({
     }
   },
   methods: {
-    focus(e) {
-      e.target.closest(".field").querySelector("input").focus()
+    focus(e: Event) {
+      if (e.target !== null){
+        const target = e.target as HTMLElement
+        target.closest(".field")!.querySelector("input")!.focus()
+      }
     },
     addChild() { // добавление в конец
       const id = Math.floor(Math.random() * 1000000)
@@ -96,6 +99,9 @@ export default defineComponent({
       if (this.age < minDifference) {
         this.sendError("age", `Минимальный возраст родителя: ${minDifference} лет.`)
       }
+      if (typeof this.age === "string"){
+        this.sendError("age", `Возраст не является числом.`)
+      }
       for (const [id, child] of Object.entries(this.children)) {
         if (child.name.length === 0) {
           this.sendError("name", "Пустое поле.", true, Number(id))
@@ -108,6 +114,9 @@ export default defineComponent({
         }
         if (child.age < 0) {
           this.sendError("age", `Возраст ребёнка не может быть отрицательным.`, true, Number(id))
+        }
+        if (typeof child.age === "string"){
+          this.sendError("age", `Возраст не является числом.`, true, Number(id))
         }
       }
     },
